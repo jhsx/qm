@@ -1,4 +1,4 @@
-package qmongo
+package qm
 
 import (
 	"testing"
