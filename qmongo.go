@@ -1,6 +1,6 @@
 package qm
-import "gopkg.in/mgo.v2/bson"
 
+import "gopkg.in/mgo.v2/bson"
 
 type Builder struct {
 	doc bson.D
@@ -15,7 +15,7 @@ func (doc *Builder) GetBSON() (interface{}, error) {
 }
 
 // Set sets bson field k with the value v row[k]=v
-func (doc *Builder ) Set(k string, v interface{}) *Builder {
+func (doc *Builder) Set(k string, v interface{}) *Builder {
 	numDocs := len(doc.doc)
 	for i := 0; i < numDocs; i++ {
 		d := &doc.doc[i]
@@ -24,10 +24,9 @@ func (doc *Builder ) Set(k string, v interface{}) *Builder {
 			return doc
 		}
 	}
-	doc.doc = append(doc.doc, bson.DocElem{Name:k, Value:v})
+	doc.doc = append(doc.doc, bson.DocElem{Name: k, Value: v})
 	return doc
 }
-
 
 // -- eq --
 type eq struct {
@@ -44,7 +43,6 @@ func (doc *Builder) Eq(k string, v interface{}) *Builder {
 func Eq(k string, v interface{}) *Builder {
 	return NewBuilder().Eq(k, v)
 }
-
 
 // -- neq --
 type neq struct {
@@ -64,7 +62,7 @@ func Neq(k string, v interface{}) *Builder {
 
 // RegEx sets bson field k with a regex pattern and options
 func (doc *Builder) RegEx(k, pattern, options string) *Builder {
-	doc.Set(k, bson.RegEx{Pattern:pattern, Options:options})
+	doc.Set(k, bson.RegEx{Pattern: pattern, Options: options})
 	return doc
 }
 
@@ -73,9 +71,8 @@ func RegEx(k, pattern, options string) *Builder {
 	return NewBuilder().RegEx(k, pattern, options)
 }
 
-
 // And is equivalent to expr0 && expr1 && expr...
-func (doc *Builder ) And(docs ...interface{}) *Builder {
+func (doc *Builder) And(docs ...interface{}) *Builder {
 	numDocs := len(doc.doc)
 	for i := 0; i < numDocs; i++ {
 		d := &doc.doc[i]
@@ -84,7 +81,7 @@ func (doc *Builder ) And(docs ...interface{}) *Builder {
 			return doc
 		}
 	}
-	doc.doc = append(doc.doc, bson.DocElem{Name:"$and", Value: docs})
+	doc.doc = append(doc.doc, bson.DocElem{Name: "$and", Value: docs})
 	return doc
 }
 
@@ -94,7 +91,7 @@ func And(docs ...interface{}) *Builder {
 }
 
 // Or is equivalent to expr0 || expr1 || expr...
-func (doc *Builder ) Or(docs ...interface{}) *Builder {
+func (doc *Builder) Or(docs ...interface{}) *Builder {
 	numDocs := len(doc.doc)
 	for i := 0; i < numDocs; i++ {
 		d := &doc.doc[i]
@@ -103,7 +100,7 @@ func (doc *Builder ) Or(docs ...interface{}) *Builder {
 			return doc
 		}
 	}
-	doc.doc = append(doc.doc, bson.DocElem{Name:"$or", Value: docs})
+	doc.doc = append(doc.doc, bson.DocElem{Name: "$or", Value: docs})
 	return doc
 }
 
@@ -113,7 +110,7 @@ func Or(docs ...interface{}) *Builder {
 }
 
 // NotOr is equivalent to !expr0 || !expr1 || !expr...
-func (doc *Builder ) NotOr(docs ...interface{}) *Builder {
+func (doc *Builder) NotOr(docs ...interface{}) *Builder {
 	numDocs := len(doc.doc)
 	for i := 0; i < numDocs; i++ {
 		d := &doc.doc[i]
@@ -122,7 +119,7 @@ func (doc *Builder ) NotOr(docs ...interface{}) *Builder {
 			return doc
 		}
 	}
-	doc.doc = append(doc.doc, bson.DocElem{Name:"$nor", Value: docs})
+	doc.doc = append(doc.doc, bson.DocElem{Name: "$nor", Value: docs})
 	return doc
 }
 

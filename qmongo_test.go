@@ -1,16 +1,15 @@
 package qm
 
 import (
-	"testing"
 	"gopkg.in/mgo.v2/bson"
+	"testing"
 )
 
-
 func tt() interface{} {
-	return bson.M{"$and":[]bson.M{
-		{"id":bson.M{"$eq":"p1"}},
-		{"name":bson.M{"$eq":"p2"}},
-		{"description":bson.M{"$regex":"asfasdfas"}},
+	return bson.M{"$and": []bson.M{
+		{"id": bson.M{"$eq": "p1"}},
+		{"name": bson.M{"$eq": "p2"}},
+		{"description": bson.M{"$regex": "asfasdfas"}},
 	}}
 }
 
@@ -32,7 +31,6 @@ func ttdb() interface{} {
 	)
 }
 
-
 func BenchmarkDBMapObjects(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		tt()
@@ -44,7 +42,6 @@ func BenchmarkDBRawObjects(b *testing.B) {
 		ttd()
 	}
 }
-
 
 func BenchmarkDBDocBuilder(b *testing.B) {
 	for i := 0; i < b.N; i++ {
