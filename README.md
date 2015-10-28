@@ -4,49 +4,18 @@ Mongo DB query builder for go, works with mgo driver
 # Example
 ```go
 
-import(
-	"github.com/jhsx/qm"
-)
-
-func (c *bookController) ShowBook() Response {
-	var book Book
-	
-	
-	c.DB.C("books").Find(
-	  // same as bson.D{{"id":bson.D{{"$eq":c.P.Get("bookId")}}}}
-	  qm.Eq("id", c.P.Get("bookId")),
-  	).One(&book)
-	
-	if book.Id == "" {
-		return c.Goto("main.bookController.ShowBooks")
+func (c *YourController) ShowBooks() mvc.Response{
+	var books []Book
+	q := qm.Builder()
+	if value:=c.FormVar("publish_before"); value != ""{
+		q.And(Lte("publish_date",value))
 	}
-	
-	return c.SendViewLayout("book.go.html", &book)
-	
+	if value:=c.FormVar("title"); value != ""{
+		q.And(Eq("title",value))
+	}
+	...
+	c.Db.C("books").Find(q).All(&books)
+	return c.SendView("showbooks.go.html",books)
 }
-
-
-func (c *bookController) SearchBooks() Response {
-	var books []*Book
-
-	query := qm.NewBuilder()
-
-	if value := c.R.FormValue("id"); value != "" {
-		query.And(qm.RegEx("id",value,"ig"))
-	}
-
-	if value := c.R.FormValue("name"); value != "" {
-		query.And(qm.RegEx("name",value,"ig"))
-	}
-
-	if value := c.R.FormValue("description"); value != "" {
-		query.And(qm.RegEx("description",value,"ig"))
-	}
-	
-	c.DB.C("books").Find(query).All(&books)
-	
-	return c.SendViewLayout("books.go.html", books)
-}
-
 
 ```
