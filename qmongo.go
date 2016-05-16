@@ -10,6 +10,10 @@ func Builder() *Document {
 	return &Document{}
 }
 
+func New(k string, v interface{}) *Document {
+	return Builder().Set(k, v)
+}
+
 func (doc *Document) GetBSON() (interface{}, error) {
 	return doc.doc, nil
 }
@@ -221,5 +225,47 @@ func (doc *Document) NotOr(docs ...interface{}) *Document {
 
 // NotOr is equivalent to !expr0 || !expr1 || !expr...
 func NotOr(docs ...interface{}) *Document {
-	return Builder().Or(docs...)
+	return Builder().NotOr(docs...)
+}
+
+
+// -- nin --
+
+// DocSet
+func (doc *Document) DocSet(k string, v interface{}) *Document {
+	numDocs := len(doc.doc)
+	for i := 0; i < numDocs; i++ {
+		d := &doc.doc[i]
+		if d.Name == "$set" {
+			d.Value.(*Document).Set(k, v)
+		}
+	}
+
+	doc.doc = append(doc.doc, bson.DocElem{Name: "$set", Value: Builder().Set(k, v)})
+	return doc
+}
+
+// DocSet is equivalent to !expr0 || !expr1 || !expr...
+func DocSet(k string, v interface{}) *Document {
+	return Builder().DocSet(k, v)
+}
+
+
+// Exists
+func (doc *Document) Exists(k string, v interface{}) *Document {
+	numDocs := len(doc.doc)
+	for i := 0; i < numDocs; i++ {
+		d := &doc.doc[i]
+		if d.Name == "$exists" {
+			d.Value.(*Document).Set(k, v)
+		}
+	}
+
+	doc.doc = append(doc.doc, bson.DocElem{Name: "$exists", Value: Builder().Set(k, v)})
+	return doc
+}
+
+// Exists is equivalent to !expr0 || !expr1 || !expr...
+func Exists(k string, v interface{}) *Document {
+	return Builder().Exists(k, v)
 }
