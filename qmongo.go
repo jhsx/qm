@@ -228,7 +228,6 @@ func NotOr(docs ...interface{}) *Document {
 	return Builder().NotOr(docs...)
 }
 
-
 // -- nin --
 
 // DocSet
@@ -238,6 +237,7 @@ func (doc *Document) DocSet(k string, v interface{}) *Document {
 		d := &doc.doc[i]
 		if d.Name == "$set" {
 			d.Value.(*Document).Set(k, v)
+			return doc
 		}
 	}
 
@@ -250,18 +250,34 @@ func DocSet(k string, v interface{}) *Document {
 	return Builder().DocSet(k, v)
 }
 
-
-// Exists
-func (doc *Document) Exists(k string, v interface{}) *Document {
+// SetOnInsert
+func (doc *Document) SetOnInsert(k string, v interface{}) *Document {
 	numDocs := len(doc.doc)
 	for i := 0; i < numDocs; i++ {
 		d := &doc.doc[i]
-		if d.Name == "$exists" {
+		if d.Name == "$setOnInsert" {
 			d.Value.(*Document).Set(k, v)
+			return doc
 		}
 	}
 
-	doc.doc = append(doc.doc, bson.DocElem{Name: "$exists", Value: Builder().Set(k, v)})
+	doc.doc = append(doc.doc, bson.DocElem{Name: "$setOnInsert", Value: Builder().Set(k, v)})
+	return doc
+}
+
+// SetOnInsert is equivalent to !expr0 || !expr1 || !expr...
+func SetOnInsert(k string, v interface{}) *Document {
+	return Builder().SetOnInsert(k, v)
+}
+
+// -- exists --
+type exists struct {
+	Exists interface{} `bson:"$exists"`
+}
+
+// Exists
+func (doc *Document) Exists(k string, v interface{}) *Document {
+	doc.Set(k, exists{v})
 	return doc
 }
 
